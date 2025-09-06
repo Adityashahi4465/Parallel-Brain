@@ -31,13 +31,37 @@ class InventoryScreen extends StatelessWidget {
             return const Center(child: Text('No items found.'));
           }
 
-          final items = snapshot.data!.docs;
+          // Normalize data and sort by date manually
+          final items = snapshot.data!.docs.map((doc) {
+            final data = doc.data() as Map<String, dynamic>;
+            dynamic addedOn =
+                getValueIgnoreCase(data, 'added_on') ??
+                getValueIgnoreCase(data, 'added on');
+            DateTime addedOnDate;
+
+            if (addedOn is Timestamp) {
+              addedOnDate = addedOn.toDate();
+            } else if (addedOn is String) {
+              addedOnDate = DateTime.tryParse(addedOn) ?? DateTime(0);
+            } else {
+              addedOnDate = DateTime(0);
+            }
+
+            return {...data, 'added_on_normalized': addedOnDate};
+          }).toList();
+
+          // Sort descending by date
+          items.sort(
+            (a, b) => (b['added_on_normalized'] as DateTime).compareTo(
+              a['added_on_normalized'] as DateTime,
+            ),
+          );
 
           return ListView.builder(
             padding: const EdgeInsets.symmetric(vertical: 8),
             itemCount: items.length,
             itemBuilder: (context, index) {
-              final data = items[index].data() as Map<String, dynamic>;
+              final data = items[index];
 
               final name = getValueIgnoreCase(data, 'name') ?? 'Unnamed';
               final category = getValueIgnoreCase(data, 'category') ?? '-';
@@ -45,29 +69,20 @@ class InventoryScreen extends StatelessWidget {
               final qty = getValueIgnoreCase(data, 'Qty') ?? '-';
               final isDeadStock =
                   getValueIgnoreCase(data, 'isDeadStock') ?? false;
-              final addedOn = getValueIgnoreCase(data, 'added_on');
+              final addedOn = data['added_on_normalized'] as DateTime?;
               final recommendation =
                   getValueIgnoreCase(data, 'recommendation') ?? {};
 
-              // Format timestamp
-              String addedOnStr = '-';
-              if (addedOn is Timestamp) {
-                addedOnStr = DateFormat.yMMMd().add_jms().format(
-                  addedOn.toDate(),
-                );
-              } else if (addedOn is String) {
-                addedOnStr = addedOn;
-              }
+              String addedOnStr = addedOn != null
+                  ? DateFormat.yMMMd().add_Hm().format(addedOn)
+                  : '-';
 
               // Recommendation only for non-dead stock items
               String? recommendationStr;
               if (!isDeadStock && recommendation is Map) {
-                if (recommendation['Liquidity'] != null) {
-                  recommendationStr = 'Email: ${recommendation['Liquidity']}';
-                } else if (recommendation['Discount'] != null) {
-                  recommendationStr =
-                      'Discount: ${recommendation['Discount']}%';
-                }
+                recommendationStr = recommendation.entries
+                    .map((e) => '${e.key}: ${e.value}')
+                    .join(' | ');
               }
 
               return Card(
@@ -105,9 +120,15 @@ class InventoryScreen extends StatelessWidget {
                         ),
                       ),
                       Text('Added On: $addedOnStr'),
+                      if (recommendationStr != null) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          'Recommendation: $recommendationStr',
+                          style: const TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                      ],
                     ],
                   ),
-                  isThreeLine: false,
                 ),
               );
             },

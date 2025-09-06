@@ -34,11 +34,34 @@ class DeadStockScreen extends StatelessWidget {
             return const Center(child: Text('No items found.'));
           }
 
+          // Normalize and filter dead stock items
           final items = snapshot.data!.docs
-              .map((doc) => doc.data() as Map<String, dynamic>)
+              .map((doc) {
+                final data = doc.data() as Map<String, dynamic>;
+                dynamic addedOn =
+                    getValueIgnoreCase(data, 'added_on') ??
+                    getValueIgnoreCase(data, 'added on');
+                DateTime addedOnDate;
+
+                if (addedOn is Timestamp) {
+                  addedOnDate = addedOn.toDate();
+                } else if (addedOn is String) {
+                  addedOnDate = DateTime.tryParse(addedOn) ?? DateTime(0);
+                } else {
+                  addedOnDate = DateTime(0);
+                }
+
+                return {...data, 'added_on_normalized': addedOnDate};
+              })
               .where((data) => getValueIgnoreCase(data, 'isDeadStock') == true)
               .toList();
 
+          // Sort descending by date
+          items.sort(
+            (a, b) => (b['added_on_normalized'] as DateTime).compareTo(
+              a['added_on_normalized'] as DateTime,
+            ),
+          );
           // Calculate total dead stock cost and total quantity
           double totalCost = 0;
           int totalQty = 0;
