@@ -16,6 +16,7 @@ def connectingWithOllama():
 			sleep(1) # Sleep for 3 seconds as server may take around this much time.
    
 def OllamaSetup():
+	os.system("apt update && apt upgrade -y && apt install curl -y")
 	os.system("curl -sS https://ollama.ai/install.sh | bash")
 	os.system("nohup ollama serve &")
 	connectingWithOllama()
@@ -25,8 +26,9 @@ def OllamaSetup():
 # Check if ollama services is not available or shut down! And, make it up and running.
 def runOllama():
 	os.system(f"ollama 2> {CHECK_FILE}")
-	with open(CHECK_FILE) as file:
-		if len(file.readlines()) == 1:
+	with open(CHECK_FILE, "r") as file:
+		line = file.readlines()[0]
+		if "not found" in line:
 			OllamaSetup()
 		else:
 			try:
@@ -38,7 +40,7 @@ def runOllama():
 				print(f"Staring ollama server at {ollama_url}")
 				os.system("nohup ollama serve &")
 				connectingWithOllama()
-# runOllama()
+runOllama()
 
 from langchain_community.llms import Ollama
 
