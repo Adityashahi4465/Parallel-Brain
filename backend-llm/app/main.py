@@ -30,7 +30,7 @@ async def root():
 
 
 from .DeadStockAI import sql_generator
-@app.get("/query")
+@app.post("/query")
 async def user_query(query: Query):
     try:
         get_sql = sql_generator(query.query)
