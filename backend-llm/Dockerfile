@@ -1,5 +1,6 @@
 FROM python:3.11.13-bullseye
-# RUN apt update && apt upgrade -y
+RUN apt update && apt upgrade -y && apt install curl -y
+RUN curl -sS https://ollama.ai/install.sh | bash
 WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt

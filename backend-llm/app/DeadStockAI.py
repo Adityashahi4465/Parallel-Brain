@@ -16,11 +16,11 @@ def connectingWithOllama():
 			sleep(1) # Sleep for 3 seconds as server may take around this much time.
    
 def OllamaSetup():
-	os.system("apt update && apt upgrade -y && apt install curl -y")
-	os.system("curl -sS https://ollama.ai/install.sh | bash")
+	# os.system("apt update && apt upgrade -y && apt install curl -y")
+	# os.system("curl -sS https://ollama.ai/install.sh | bash")
 	os.system("nohup ollama serve &")
 	connectingWithOllama()
-	os.system("ollama pull llama3.2:1b")
+	os.system("ollama pull phi3")
 	os.system("echo \"1\" > check.txt")
 
 # Check if ollama services is not available or shut down! And, make it up and running.
@@ -46,7 +46,7 @@ from langchain_community.llms import Ollama
 
 
 # Load your local LLaMA model
-llm = Ollama(model="llama3.2:1b")
+llm = Ollama(model="phi3")
 
 # System rules (JSON-only, schema, table info)
 system_prompt = """You are a SQL query generator. 
@@ -79,5 +79,10 @@ def sql_generator(user_prompt: str):
 
     # Generate output
     response = llm(full_prompt)
+    
+    start = response.index("{")
+    end = response.index("}") + 1
+    
+    print("response is: ", response[start:end])
 
-    return json.loads(response)
+    return json.loads(response[start:end])
