@@ -1,0 +1,36 @@
+{
+  "kind": "collectionType",
+  "collectionName": "items",
+  "info": {
+    "singularName": "item",
+    "pluralName": "items",
+    "displayName": "Item"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "t-shirt",
+        "shirt-",
+        "jeans",
+        "trousers",
+        "top",
+        "pants"
+      ]
+    },
+    "price": {
+      "type": "decimal"
+    },
+    "item_id": {
+      "type": "uid",
+      "targetField": "name"
+    }
+  }
+}

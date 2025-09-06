@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "148923600057",
+    "project_id": "parllel-brains",
+    "storage_bucket": "parllel-brains.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:148923600057:android:87ba11c5c7550297b49f68",
+        "android_client_info": {
+          "package_name": "com.aditya.fintech.fintech"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2_IXetAe7gG9LiHF7L9WHBgeR_M-iV98"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
