@@ -1,4 +1,4 @@
-FROM pytorch/pytorch
+FROM python:3.11.13-bullseye
 # RUN apt update && apt upgrade -y
 WORKDIR /app
 COPY requirements.txt .
