@@ -1,0 +1,14 @@
+services:
+  api:
+    build: ./
+    container_name: dead_stock_ai_api
+    working_dir: /app
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/app
+    command: /bin/bash
+    stdin_open: true
+    tty: true
+  
+  
