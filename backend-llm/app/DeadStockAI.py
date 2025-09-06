@@ -16,8 +16,8 @@ def connectingWithOllama():
 			sleep(1) # Sleep for 3 seconds as server may take around this much time.
    
 def OllamaSetup():
-	os.system("apt update && apt upgrade -y && apt install curl -y")
-	os.system("curl -sS https://ollama.ai/install.sh | bash")
+	# os.system("apt update && apt upgrade -y && apt install curl -y")
+	# os.system("curl -sS https://ollama.ai/install.sh | bash")
 	os.system("nohup ollama serve &")
 	connectingWithOllama()
 	os.system("ollama pull phi3")
@@ -40,7 +40,7 @@ def runOllama():
 				print(f"Staring ollama server at {ollama_url}")
 				os.system("nohup ollama serve &")
 				connectingWithOllama()
-runOllama()
+OllamaSetup()
 
 from langchain_community.llms import Ollama
 
